@@ -87,9 +87,9 @@ def test():
             hero_score_map = ally_hero_scores if int(max(1, (pred["box"][0] * imH))) > pred["box"][0] * imH * 0.55 else enemy_hero_scores
             utils.draw_hero_scores(imH, imW, pred["box"], img, hero_score_map[pred["label"]])
 
-        recommendations = algorithm.hero_recommendations(ally_hero_scores, heroes["ally"])
+        recommendations = algorithm.hero_recommendation_ver_b(ally_hero_scores, heroes["ally"], heroes["enemy"])
         ally_total_score, enemy_total_score = algorithm.team_scores(ally_hero_scores, heroes["ally"], enemy_hero_scores, heroes["enemy"])
-        utils.draw_overall_results(imH, imW, img, ally_total_score, enemy_total_score, recommendations)
+        utils.draw_overall_test_results_ver_b(imH, imW, img, ally_total_score, enemy_total_score, recommendations)
 
         # resize the image to fit the screen
         new_img = cv2.resize(img, (1920, 1080))

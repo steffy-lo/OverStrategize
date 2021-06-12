@@ -11,7 +11,8 @@ def hero_scores(allies, enemies, rank, map=None, ad=None, point=None):
         for hero_counter in enemies:
             counter_score += hero_counters.data[hero][hero_counter]
         for hero_synergy in allies:
-            synergy_score += hero_synergies.data[hero][hero_synergy]
+            if hero != hero_synergy:
+                synergy_score += hero_synergies.data[hero][hero_synergy]
         ally_hero_scores[hero] += synergy_score + counter_score
 
     enemy_hero_scores = {}
@@ -20,7 +21,8 @@ def hero_scores(allies, enemies, rank, map=None, ad=None, point=None):
         synergy_score = 0
         counter_score = 0
         for hero_synergy in enemies:
-            synergy_score += hero_synergies.data[hero][hero_synergy]
+            if hero != hero_synergy:
+                synergy_score += hero_synergies.data[hero][hero_synergy]
         for hero_counter in allies:
             counter_score += hero_counters.data[hero][hero_counter]
         enemy_hero_scores[hero] += synergy_score + counter_score
@@ -85,30 +87,30 @@ def hero_recommendation_by_line(line, line_num, ally_hero_scores, allies, enemie
                 "to_best": [],
                 "to_worst": []
             })
-            allies_remove_one = filter(lambda x: x != hero["hero"], allies)
+            allies_remove_one = list(filter(lambda x: x != hero["hero"], allies))
             ally_hero_scores_remove_one, enemy_hero_scores = hero_scores(allies_remove_one, enemies, "All")
             recommendations = hero_recommendations(ally_hero_scores_remove_one, allies_remove_one)
-            line_recommendation[i]["to_best"] = recommendations["best"][line_num][:1]
-            line_recommendation[i]["to_worst"] = recommendations["worst"][line_num][:1]
+            line_recommendation[i]["to_best"] = recommendations["best"][line_num][:2]
+            line_recommendation[i]["to_worst"] = recommendations["worst"][line_num][:2]
             i += 1
 
     elif len(line) == 1:
         recommendations = hero_recommendations(ally_hero_scores, allies)
         line_recommendation.append({
             "from": None,
-            "to_best": recommendations["best"][0][:2],
-            "to_worst": recommendations["worst"][0][:2]
+            "to_best": recommendations["best"][line_num][:2],
+            "to_worst": recommendations["worst"][line_num][:2]
         })
         line_recommendation.append({
             "from": line[0],
             "to_best": [],
             "to_worst": []
         })
-        allies_remove_one = filter(lambda x: x != line[0]["hero"], allies)
+        allies_remove_one = list(filter(lambda x: x != line[0]["hero"], allies))
         ally_hero_scores_remove_one, enemy_hero_scores = hero_scores(allies_remove_one, enemies, "All")
         recommendations = hero_recommendations(ally_hero_scores_remove_one, allies_remove_one)
-        line_recommendation[1]["to_best"] = recommendations["best"][line_num][:1]
-        line_recommendation[1]["to_worst"] = recommendations["worst"][line_num][:1]
+        line_recommendation[1]["to_best"] = recommendations["best"][line_num][:2]
+        line_recommendation[1]["to_worst"] = recommendations["worst"][line_num][:2]
 
     else:
         recommendations = hero_recommendations(ally_hero_scores, allies)

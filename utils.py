@@ -90,7 +90,7 @@ def draw_hero_icon(x_offset, y_offset, icon, img):
                                 alpha_l * img[y1:y2, x1:x2, c])
 
 
-def draw_overall_results(height, width, img, ally_score, enemy_score, recommendations):
+def draw_overall_test_results(height, width, img, ally_score, enemy_score, recommendations):
     cv2.putText(img, "Ally Score: " + str(ally_score), (int(width * 0.2), int(height * 0.45)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (234, 185, 63), 2)
     cv2.putText(img, "Enemy Score: " + str(enemy_score), (int(width * 0.2), int(height * 0.41)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (26, 1, 243), 2)
 
@@ -150,3 +150,98 @@ def draw_overall_results(height, width, img, ally_score, enemy_score, recommenda
         cv2.putText(img, support["hero"], (x_offset, y_offset + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10, 255, 0), 2)
         cv2.putText(img, str(support["score"]), (x_offset + 60, y_offset + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (10, 255, 0), 2)
         y_offset += 80
+
+
+def draw_hero_switch_results(hero, img, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst):
+    if hero["from"] is not None:
+        # best hero switches
+        from_icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[hero["from"]["hero"]], -1)
+        draw_hero_icon(x_offset_best, y_offset_best, from_icon, img)
+        cv2.putText(img, hero["from"]["hero"], (x_offset_best, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (10, 255, 0),
+                    2)
+        cv2.putText(img, str(hero["from"]["score"]), (x_offset_best + 50, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (10, 255, 0), 2)
+
+        cv2.putText(img, "->", (x_offset_best + 95, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
+                    (10, 255, 0), 2)
+        for best_hero_switch in hero["to_best"]:
+            to_icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[best_hero_switch["hero"]], -1)
+            draw_hero_icon(x_offset_best + 140, y_offset_best, to_icon, img)
+            cv2.putText(img, str(best_hero_switch["score"]), (x_offset_best + 140, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (10, 255, 0), 2)
+            x_offset_best += 60
+
+        y_offset_best += 80
+
+        # worst hero switches
+        from_icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[hero["from"]["hero"]], -1)
+        draw_hero_icon(x_offset_worst, y_offset_worst, from_icon, img)
+        cv2.putText(img, hero["from"]["hero"], (x_offset_worst, y_offset_worst + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (10, 255, 0), 2)
+        cv2.putText(img, str(hero["from"]["score"]), (x_offset_worst + 50, y_offset_worst + 30),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (10, 255, 0), 2)
+
+        cv2.putText(img, "->", (x_offset_worst + 95, y_offset_worst + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
+                    (10, 255, 0), 2)
+        for worst_hero_switch in hero["to_worst"]:
+            to_icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[worst_hero_switch["hero"]], -1)
+            draw_hero_icon(x_offset_worst + 140, y_offset_worst, to_icon, img)
+            cv2.putText(img, str(worst_hero_switch["score"]), (x_offset_worst + 140, y_offset_worst + 60),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (10, 255, 0), 2)
+            x_offset_worst += 60
+
+        y_offset_worst += 80
+    else:
+        for best_hero in hero["to_best"]:
+            icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[best_hero["hero"]], -1)
+            draw_hero_icon(x_offset_best, y_offset_best, icon, img)
+            cv2.putText(img, best_hero["hero"], (x_offset_best, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10, 255, 0), 2)
+            cv2.putText(img, str(best_hero["score"]), (x_offset_best + 50, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (10, 255, 0), 2)
+            y_offset_best += 80
+
+        for worst_hero in hero["to_worst"]:
+            icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[worst_hero["hero"]], -1)
+            draw_hero_icon(x_offset_worst, y_offset_worst, icon, img)
+            cv2.putText(img, worst_hero["hero"], (x_offset_worst, y_offset_worst + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10, 255, 0), 2)
+            cv2.putText(img, str(worst_hero["score"]), (x_offset_worst + 50, y_offset_worst + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (10, 255, 0), 2)
+            y_offset_worst += 80
+
+    return y_offset_best, y_offset_worst
+
+
+def draw_overall_test_results_ver_b(height, width, img, ally_score, enemy_score, recommendations):
+    cv2.putText(img, "Ally Score: " + str(ally_score), (int(width * 0.2), int(height * 0.45)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (234, 185, 63), 2)
+    cv2.putText(img, "Enemy Score: " + str(enemy_score), (int(width * 0.2), int(height * 0.41)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (26, 1, 243), 2)
+
+    # best heroes
+    cv2.putText(img, "Best Heroes", (int(width * 0.82), int(height * 0.10)), cv2.FONT_HERSHEY_COMPLEX, 0.7, (10, 255, 0), 2)
+    y_offset_best = int(height * 0.15)
+    x_offset_best = int(width * 0.82)
+
+    # worst heroes
+    cv2.putText(img, "Worst Heroes", (int(width * 0.05), int(height * 0.10)), cv2.FONT_HERSHEY_COMPLEX, 0.7,
+                (10, 255, 0), 2)
+    y_offset_worst = int(height * 0.15)
+    x_offset_worst = int(width * 0.05)
+
+    for tank in recommendations[0]:
+        y_offset_best, y_offset_worst = draw_hero_switch_results(tank, img, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst)
+
+    y_offset_best = int(height * 0.40)
+    y_offset_worst = int(height * 0.40)
+
+    for dps in recommendations[1]:
+        y_offset_best, y_offset_worst = draw_hero_switch_results(dps, img, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst)
+
+    y_offset_best = int(height * 0.65)
+    y_offset_worst = int(height * 0.65)
+
+    for support in recommendations[2]:
+        y_offset_best, y_offset_worst = draw_hero_switch_results(support, img, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst)
