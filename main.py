@@ -105,15 +105,16 @@ capture = True
 
 
 def show_overlay(predictions):
-    heroes = {
-        "ally": [],
-        "enemy": []
-    }
 
     with overlay.FullScreenOverlay() as fs_overlay:
         while fs_overlay.loop:
+            heroes = {
+                "ally": [],
+                "enemy": []
+            }
             # read the image with opencv
             img = cv2.imread("capture.jpg")
+
             # get the width and height of the image
             img_height, img_width, _ = img.shape
             for pred in predictions:
@@ -128,20 +129,32 @@ def show_overlay(predictions):
                 ymax = int(min(img_height, (box[2] * img_height)))
                 xmax = int(min(img_width, (box[3] * img_width)))
 
-                hero_type = "ally" if ymin > box[0] * img_height * 0.55 else "enemy"
+                hero_type = "ally" if int(max(1, (pred["box"][0] * img_height))) > img_height * 0.35 else "enemy"
                 heroes[hero_type].append(label)
 
                 overlay.Draw.outline(xmin, img_height - ymin, xmax - xmin, ymin - ymax, 2.5, overlay.Draw.green)
                 overlay.Draw.text(xmin, img_height - ymin + 10, overlay.Draw.green, label)
 
             ally_hero_scores, enemy_hero_scores = algorithm.hero_scores(heroes["ally"], heroes["enemy"], "All")
-            algorithm.hero_recommendations(ally_hero_scores, heroes["ally"])
 
+            for pred in predictions:
+                hero_score_map = ally_hero_scores if int(max(1, (pred["box"][0] * img_height))) > img_height * 0.35 else enemy_hero_scores
+                box = pred["box"]
+                label = pred["label"]
+                ymax = int(min(img_height, (box[2] * img_height)))
+                xmin = int(max(1, (box[1] * img_width)))
+                score_label = str(hero_score_map[label])
+                overlay.Draw.text(xmin, img_height - ymax - 25, overlay.Draw.green, score_label)
+
+            recommendations = algorithm.hero_recommendation_ver_b(ally_hero_scores, heroes["ally"], heroes["enemy"])
+            ally_total_score, enemy_total_score = algorithm.team_scores(ally_hero_scores, heroes["ally"],
+                                                                        enemy_hero_scores, heroes["enemy"])
+
+            utils.draw_results_to_overlay(img_height, img_width, ally_total_score, enemy_total_score, recommendations)
             fs_overlay.update()
 
 
 def run():
-
     # Program listens and runs on Tab Press
     def on_press(key):
         global capture
@@ -163,7 +176,7 @@ def run():
 
 
 if __name__ == "__main__":
-    DEBUG = True
+    DEBUG = False
     if DEBUG:
         test()
     else:

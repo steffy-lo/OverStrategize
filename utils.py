@@ -1,5 +1,6 @@
 import cv2
 import config
+import overlay
 
 hero_icons_mapping = {
     "Tracer": "tracer.png",
@@ -152,66 +153,119 @@ def draw_overall_test_results(height, width, img, ally_score, enemy_score, recom
         y_offset += 80
 
 
-def draw_hero_switch_results(hero, img, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst):
+def draw_hero_switch_results(hero, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst, img):
     if hero["from"] is not None:
         # best hero switches
-        from_icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[hero["from"]["hero"]], -1)
-        draw_hero_icon(x_offset_best, y_offset_best, from_icon, img)
-        cv2.putText(img, hero["from"]["hero"], (x_offset_best, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    (10, 255, 0),
-                    2)
-        cv2.putText(img, str(hero["from"]["score"]), (x_offset_best + 50, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (10, 255, 0), 2)
-
-        cv2.putText(img, "->", (x_offset_best + 95, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
-                    (10, 255, 0), 2)
-        for best_hero_switch in hero["to_best"]:
-            to_icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[best_hero_switch["hero"]], -1)
-            draw_hero_icon(x_offset_best + 140, y_offset_best, to_icon, img)
-            cv2.putText(img, str(best_hero_switch["score"]), (x_offset_best + 140, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+        from_hero_icon_path = config.hero_icons_path + "/" + hero_icons_mapping[hero["from"]["hero"]]
+        from_hero = hero["from"]["hero"]
+        from_hero_score = str(hero["from"]["score"])
+        if img is not None:
+            from_icon = cv2.imread(from_hero_icon_path, -1)
+            draw_hero_icon(x_offset_best, y_offset_best, from_icon, img)
+            cv2.putText(img, from_hero, (x_offset_best, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (10, 255, 0),
+                        2)
+            cv2.putText(img, from_hero_score, (x_offset_best + 50, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
                         (10, 255, 0), 2)
-            x_offset_best += 60
+            cv2.putText(img, "->", (x_offset_best + 95, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
+                        (10, 255, 0), 2)
+        else:
+            # production
+            overlay.Draw.display_image(from_hero_icon_path, x_offset_best, y_offset_best)
+            overlay.Draw.text(x_offset_best, y_offset_best + 70, overlay.Draw.green, from_hero)
+            overlay.Draw.text(x_offset_best + 90, y_offset_best + 40, overlay.Draw.green, from_hero_score)
+            overlay.Draw.text(x_offset_best + 135, y_offset_best + 40, overlay.Draw.green, "->")
 
-        y_offset_best += 80
+        for best_hero_switch in hero["to_best"]:
+            to_hero_icon_path = config.hero_icons_path + "/" + hero_icons_mapping[best_hero_switch["hero"]]
+            to_hero_score = str(best_hero_switch["score"])
+            if img is not None:
+                to_icon = cv2.imread(to_hero_icon_path, -1)
+                draw_hero_icon(x_offset_best + 140, y_offset_best, to_icon, img)
+                cv2.putText(img, to_hero_score, (x_offset_best + 140, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                            (10, 255, 0), 2)
+            else:
+                # production
+                overlay.Draw.display_image(to_hero_icon_path, x_offset_best + 170, y_offset_best)
+                overlay.Draw.text(x_offset_best + 185, y_offset_best + 70, overlay.Draw.green, to_hero_score)
+            x_offset_best += 70
+        y_offset_best += 100
 
         # worst hero switches
-        from_icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[hero["from"]["hero"]], -1)
-        draw_hero_icon(x_offset_worst, y_offset_worst, from_icon, img)
-        cv2.putText(img, hero["from"]["hero"], (x_offset_worst, y_offset_worst + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    (10, 255, 0), 2)
-        cv2.putText(img, str(hero["from"]["score"]), (x_offset_worst + 50, y_offset_worst + 30),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (10, 255, 0), 2)
-
-        cv2.putText(img, "->", (x_offset_worst + 95, y_offset_worst + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
-                    (10, 255, 0), 2)
-        for worst_hero_switch in hero["to_worst"]:
-            to_icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[worst_hero_switch["hero"]], -1)
-            draw_hero_icon(x_offset_worst + 140, y_offset_worst, to_icon, img)
-            cv2.putText(img, str(worst_hero_switch["score"]), (x_offset_worst + 140, y_offset_worst + 60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+        from_hero_icon_path = config.hero_icons_path + "/" + hero_icons_mapping[hero["from"]["hero"]]
+        from_hero = hero["from"]["hero"]
+        from_hero_score = str(hero["from"]["score"])
+        if img is not None:
+            from_icon = cv2.imread(from_hero_icon_path, -1)
+            draw_hero_icon(x_offset_worst, y_offset_worst, from_icon, img)
+            cv2.putText(img, from_hero, (x_offset_worst, y_offset_worst + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (10, 255, 0), 2)
-            x_offset_worst += 60
+            cv2.putText(img, from_hero_score, (x_offset_worst + 50, y_offset_worst + 30),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (10, 255, 0), 2)
 
-        y_offset_worst += 80
+            cv2.putText(img, "->", (x_offset_worst + 95, y_offset_worst + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
+                        (10, 255, 0), 2)
+        else:
+            # production
+            overlay.Draw.display_image(from_hero_icon_path, x_offset_worst, y_offset_worst)
+            overlay.Draw.text(x_offset_worst, y_offset_worst + 70, overlay.Draw.green, from_hero)
+            overlay.Draw.text(x_offset_worst + 90, y_offset_worst + 40, overlay.Draw.green, from_hero_score)
+            overlay.Draw.text(x_offset_worst + 135, y_offset_worst + 40, overlay.Draw.green, "->")
+
+        for worst_hero_switch in hero["to_worst"]:
+            to_hero_icon_path = config.hero_icons_path + "/" + hero_icons_mapping[worst_hero_switch["hero"]]
+            to_hero_score = str(worst_hero_switch["score"])
+            if img is not None:
+                to_icon = cv2.imread(to_hero_icon_path, -1)
+                draw_hero_icon(x_offset_worst + 140, y_offset_worst, to_icon, img)
+                cv2.putText(img, to_hero_score, (x_offset_worst + 140, y_offset_worst + 60),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                            (10, 255, 0), 2)
+            else:
+                # production
+                overlay.Draw.display_image(to_hero_icon_path, x_offset_worst + 170, y_offset_worst)
+                overlay.Draw.text(x_offset_worst + 185, y_offset_worst + 70, overlay.Draw.green, to_hero_score)
+
+            x_offset_worst += 70
+        y_offset_worst += 100
+
     else:
         for best_hero in hero["to_best"]:
-            icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[best_hero["hero"]], -1)
-            draw_hero_icon(x_offset_best, y_offset_best, icon, img)
-            cv2.putText(img, best_hero["hero"], (x_offset_best, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10, 255, 0), 2)
-            cv2.putText(img, str(best_hero["score"]), (x_offset_best + 50, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                        (10, 255, 0), 2)
-            y_offset_best += 80
+            best_hero_path = config.hero_icons_path + "/" + hero_icons_mapping[best_hero["hero"]]
+            best_hero_name = best_hero["hero"]
+            best_hero_score = str(best_hero["score"])
+            icon = cv2.imread(best_hero_path, -1)
+            if img is not None:
+                draw_hero_icon(x_offset_best, y_offset_best, icon, img)
+                cv2.putText(img, best_hero_name, (x_offset_best, y_offset_best + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10, 255, 0), 2)
+                cv2.putText(img, best_hero_score, (x_offset_best + 50, y_offset_best + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                            (10, 255, 0), 2)
+            else:
+                # production
+                overlay.Draw.display_image(best_hero_path, x_offset_best, y_offset_best)
+                overlay.Draw.text(x_offset_best, y_offset_best + 70, overlay.Draw.green, best_hero_name)
+                overlay.Draw.text(x_offset_best + 90, y_offset_best + 30, overlay.Draw.green, best_hero_score)
+            y_offset_best += 100
 
         for worst_hero in hero["to_worst"]:
-            icon = cv2.imread(config.hero_icons_path + "/" + hero_icons_mapping[worst_hero["hero"]], -1)
-            draw_hero_icon(x_offset_worst, y_offset_worst, icon, img)
-            cv2.putText(img, worst_hero["hero"], (x_offset_worst, y_offset_worst + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10, 255, 0), 2)
-            cv2.putText(img, str(worst_hero["score"]), (x_offset_worst + 50, y_offset_worst + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                        (10, 255, 0), 2)
-            y_offset_worst += 80
+            worst_hero_path = config.hero_icons_path + "/" + hero_icons_mapping[worst_hero["hero"]]
+            worst_hero_name = worst_hero["hero"]
+            worst_hero_score = str(worst_hero["score"])
+            icon = cv2.imread(worst_hero_path, -1)
+            if img is not None:
+                draw_hero_icon(x_offset_worst, y_offset_worst, icon, img)
+                cv2.putText(img, worst_hero_name, (x_offset_worst, y_offset_worst + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10, 255, 0), 2)
+                cv2.putText(img, worst_hero_score, (x_offset_worst + 50, y_offset_worst + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                            (10, 255, 0), 2)
+            else:
+                # production
+                overlay.Draw.display_image(worst_hero_path, x_offset_worst, y_offset_worst)
+                overlay.Draw.text(x_offset_worst, y_offset_worst + 70, overlay.Draw.green, worst_hero_name)
+                overlay.Draw.text(x_offset_worst + 90, y_offset_worst + 30, overlay.Draw.green, worst_hero_score)
+            y_offset_worst += 100
 
     return y_offset_best, y_offset_worst
 
@@ -232,16 +286,59 @@ def draw_overall_test_results_ver_b(height, width, img, ally_score, enemy_score,
     x_offset_worst = int(width * 0.05)
 
     for tank in recommendations[0]:
-        y_offset_best, y_offset_worst = draw_hero_switch_results(tank, img, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst)
+        y_offset_best, y_offset_worst = draw_hero_switch_results(tank, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst, img)
 
     y_offset_best = int(height * 0.40)
     y_offset_worst = int(height * 0.40)
 
     for dps in recommendations[1]:
-        y_offset_best, y_offset_worst = draw_hero_switch_results(dps, img, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst)
+        y_offset_best, y_offset_worst = draw_hero_switch_results(dps, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst, img)
 
     y_offset_best = int(height * 0.65)
     y_offset_worst = int(height * 0.65)
 
     for support in recommendations[2]:
-        y_offset_best, y_offset_worst = draw_hero_switch_results(support, img, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst)
+        y_offset_best, y_offset_worst = draw_hero_switch_results(support, x_offset_best, x_offset_worst, y_offset_best, y_offset_worst, img)
+
+
+def draw_results_to_overlay(height, width, ally_score, enemy_score, recommendations):
+    import OpenGL.GLUT as glut
+    #  A pointer to a font style..
+    #  Fonts supported by GLUT are: GLUT_BITMAP_8_BY_13,
+    #  GLUT_BITMAP_9_BY_15, GLUT_BITMAP_TIMES_ROMAN_10,
+    #  GLUT_BITMAP_TIMES_ROMAN_24, GLUT_BITMAP_HELVETICA_10,
+    #  GLUT_BITMAP_HELVETICA_12, and GLUT_BITMAP_HELVETICA_18.
+    font_style = glut.GLUT_BITMAP_TIMES_ROMAN_24
+    overlay.Draw.text(int(width * 0.23), int(height * 0.545), overlay.Draw.cyan, "Ally Score: " + str(ally_score), font_style)
+    overlay.Draw.text(int(width * 0.23), int(height * 0.59), overlay.Draw.alert, "Enemy Score: " + str(enemy_score), font_style)
+
+    # best heroes
+    overlay.Draw.text(int(width * 0.82), int(height * 0.90), overlay.Draw.green, "Best Heroes Picks")
+    overlay.Draw.line(int(width * 0.82), int(height * 0.90) - 10, int(width * 0.9), int(height * 0.90) - 10, 2, overlay.Draw.green)
+    y_offset_best = int(height * 0.15)
+    x_offset_best = int(width * 0.82)
+
+    # worst heroes
+    overlay.Draw.text(int(width * 0.05), int(height * 0.90), overlay.Draw.green, "Worst Heroes Picks")
+    overlay.Draw.line(int(width * 0.05), int(height * 0.90) - 10, int(width * 0.12), int(height * 0.90) - 10, 2, overlay.Draw.green)
+    y_offset_worst = int(height * 0.15)
+    x_offset_worst = int(width * 0.05)
+
+    for tank in recommendations[0]:
+        y_offset_best, y_offset_worst = draw_hero_switch_results(tank, x_offset_best, x_offset_worst,
+                                                                 y_offset_best, y_offset_worst, None)
+
+    y_offset_best = int(height * 0.40)
+    y_offset_worst = int(height * 0.40)
+
+    for dps in recommendations[1]:
+        y_offset_best, y_offset_worst = draw_hero_switch_results(dps, x_offset_best, x_offset_worst, y_offset_best,
+                                                                 y_offset_worst, None)
+
+    y_offset_best = int(height * 0.65)
+    y_offset_worst = int(height * 0.65)
+
+    for support in recommendations[2]:
+        y_offset_best, y_offset_worst = draw_hero_switch_results(support, x_offset_best, x_offset_worst,
+                                                                 y_offset_best, y_offset_worst, None)
+    return None
