@@ -31,8 +31,8 @@ PyAutoGUI==0.9.53
 PyGetWindow==0.0.9
 PyMsgBox==1.0.9
 pynput==1.7.5
-PyOpenGL @ file:///C:/Users/victo/Downloads/Overstrategize-master/wheels/PyOpenGL-3.1.5-cp38-cp38-win_amd64.whl
-PyOpenGL-accelerate @ file:///C:/Users/victo/Downloads/Overstrategize-master/wheels/PyOpenGL_accelerate-3.1.5-cp38-cp38-win_amd64.whl
+PyOpenGL @ file:///C:/Users/steff/PycharmProjects/OverStrategize/wheels/PyOpenGL-3.1.5-cp39-cp39-win_amd64.whl
+PyOpenGL-accelerate @ file:///C:/Users/steff/PycharmProjects/OverStrategize/wheels/PyOpenGL_accelerate-3.1.5-cp39-cp39-win_amd64.whl
 pyperclip==1.8.2
 PyRect==0.1.4
 PyScreeze==0.1.28

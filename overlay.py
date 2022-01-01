@@ -11,7 +11,7 @@ import keyboard as kb
 
 from PIL import Image
 import numpy as np
-import random
+import pyautogui
 
 
 class FullScreenOverlay:
@@ -30,6 +30,7 @@ class FullScreenOverlay:
             "upper_left": (0, self.height),
             "upper_right": (self.width, self.height)
         }
+        pyautogui.screenshot("capture.jpg")
 
     def __enter__(self):
         return self

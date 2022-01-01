@@ -1,9 +1,8 @@
 import cv2
 import tensorflow as tf
 import pathlib
-import time
-import pyautogui
 from pynput.keyboard import Listener
+import time
 
 import overlay
 import config
@@ -104,9 +103,10 @@ def test():
 capture = True
 
 
-def show_overlay(predictions):
-
+def show_overlay():
     with overlay.FullScreenOverlay() as fs_overlay:
+        img_bytes = open("capture.jpg", 'rb').read()
+        predictions = predict(img_bytes)
         while fs_overlay.loop:
             heroes = {
                 "ally": [],
@@ -152,6 +152,8 @@ def show_overlay(predictions):
 
             utils.draw_results_to_overlay(img_height, img_width, ally_total_score, enemy_total_score, recommendations)
             fs_overlay.update()
+    global capture
+    capture = True
 
 
 def run():
@@ -160,22 +162,14 @@ def run():
         global capture
         if str(key) == "Key.tab" and capture:
             capture = False
-            time.sleep(0.3)
-            pyautogui.screenshot("capture.jpg")
-            img_bytes = open("capture.jpg", 'rb').read()
-            predictions = predict(img_bytes)
-            show_overlay(predictions)
+            show_overlay()
 
-    def on_release(key):
-        global capture
-        if str(key) == "Key.tab":
-            capture = True
-
-    with Listener(on_press=on_press, on_release=on_release) as listener:
+    with Listener(on_press=on_press) as listener:
         listener.join()
 
 
 if __name__ == "__main__":
+    capture = True
     DEBUG = False
     if DEBUG:
         test()

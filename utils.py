@@ -246,9 +246,9 @@ def draw_hero_switch_results(hero, x_offset_best, x_offset_worst, y_offset_best,
             else:
                 # production
                 overlay.Draw.display_image(best_hero_path, x_offset_best, y_offset_best)
-                overlay.Draw.text(x_offset_best, y_offset_best + 70, overlay.Draw.green, best_hero_name)
-                overlay.Draw.text(x_offset_best + 90, y_offset_best + 30, overlay.Draw.green, best_hero_score)
-            y_offset_best += 100
+                overlay.Draw.text(x_offset_best + 90, y_offset_best + 30, overlay.Draw.green, best_hero_name)
+                overlay.Draw.text(x_offset_best + 90, y_offset_best + 10, overlay.Draw.green, best_hero_score)
+            y_offset_best += 80
 
         for worst_hero in hero["to_worst"]:
             worst_hero_path = config.hero_icons_path + "/" + hero_icons_mapping[worst_hero["hero"]]
@@ -263,9 +263,9 @@ def draw_hero_switch_results(hero, x_offset_best, x_offset_worst, y_offset_best,
             else:
                 # production
                 overlay.Draw.display_image(worst_hero_path, x_offset_worst, y_offset_worst)
-                overlay.Draw.text(x_offset_worst, y_offset_worst + 70, overlay.Draw.green, worst_hero_name)
-                overlay.Draw.text(x_offset_worst + 90, y_offset_worst + 30, overlay.Draw.green, worst_hero_score)
-            y_offset_worst += 100
+                overlay.Draw.text(x_offset_worst + 90, y_offset_worst + 30, overlay.Draw.green, worst_hero_name)
+                overlay.Draw.text(x_offset_worst + 90, y_offset_worst + 10, overlay.Draw.green, worst_hero_score)
+            y_offset_worst += 80
 
     return y_offset_best, y_offset_worst
 
